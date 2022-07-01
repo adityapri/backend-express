@@ -5,6 +5,9 @@ const app = express();
 //middleware : whatever data comes from front-end, convert that to json
 app.use(express.json());
 
+const userRoute = express.Router();
+app.use('/users',userRoute);
+
 let users = [
     {
         'id' : 1,
@@ -20,51 +23,57 @@ let users = [
     }
 ]
 
-app.get('/',(req,res) => {
-    console.log(req.query);
+userRoute
+.route('/')
+.get(getUser)
+.post(postUser)
+.patch(updateUser)
+.delete(deleteUser)
+
+userRoute
+.route('/:id')
+.get(getUserById)
+
+function getUser(req,res){
     res.send(users);
-})
+}
 
-
-
-app.post('/',(req,res) => {
+function postUser(req,res){
     console.log(req.body)
     users = req.body;
     res.json({
         message: "Data received successfully",
         user : req.body
     })
-})
+}
 
-//update -> Patch
-
-app.patch('/',(req,res) => {
+function updateUser(req,res){
     console.log(req.body);
 
     let dataToBeUpdated = req.body;
-    for(key in dataToBeUpdated) {
-        users[key]  = dataToBeUpdated[key]
-    }
+    users.push(dataToBeUpdated);
+    // for(key in dataToBeUpdated) {
+    //     users[key]  = dataToBeUpdated[key]
+    // }
 
     res.json({
         message: "Data updated successfully"
     })
-})
+}
 
-//delete - to remove the data
-app.delete('/',(req,res) => {
-    users = {}
+function deleteUser(req,res){
+    users.shift();
   res.json({
     message: "Data deleted successfully"
   })
-})
+}
 
-//params
-app.get('/:id',(req,res) => {
+function getUserById(req,res){
     res.send('user id received ');
     console.log(req.params.id);
     console.log(req.params)
-})
+}
+
 
 
 app.listen(3000)
