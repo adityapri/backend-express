@@ -6,7 +6,11 @@ const app = express();
 app.use(express.json());
 
 const userRoute = express.Router();
+const authRouter = express.Router();
+
+//base router
 app.use('/users',userRoute);
+app.use('/auth',authRouter);
 
 let users = [
     {
@@ -33,6 +37,12 @@ userRoute
 userRoute
 .route('/:id')
 .get(getUserById)
+
+
+authRouter
+.route('/signup')
+.get(getSignUp)
+.post(postSignUp)
 
 function getUser(req,res){
     res.send(users);
@@ -74,6 +84,18 @@ function getUserById(req,res){
     console.log(req.params)
 }
 
+function getSignUp(req,res){
+    res.sendFile('/public/index.html',{root:__dirname})
+}
+
+function postSignUp(req,res){
+   let objReceived = req.body;
+   console.log(objReceived);
+    res.json({
+        message: 'signed up successfully',
+        data: objReceived
+    })
+}
 
 
 app.listen(3000)
